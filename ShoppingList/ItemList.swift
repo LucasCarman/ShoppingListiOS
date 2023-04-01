@@ -12,39 +12,48 @@ struct ItemList: View {
     @State var needRefresh: Bool = false
 
     var body: some View {
-        List(itemData.items, id: \.id) { item in
-            HStack {
-                VStack(alignment: .leading) {
-                    Text("\(item.id)")
-                        .font(.headline)
-                    Text(item.itemname)
-                        .font(.subheadline)
-                }
-                VStack(alignment: .trailing) {
-                    Text(item.itemname)
-                        .font(.headline)
-                    Text(item.comment)
-                        .font(.subheadline)
-                }
-                Spacer()
-                Button(action: {
-                    // remove the item from your backend
-                    loadDataForItemId(itemid: item.id)
-                    
-                    // remove the item from the itemData.items array
-                    if let index = itemData.items.firstIndex(where: { $0.id == item.id }) {
-                        itemData.items.remove(at: index)
+        NavigationView {
+            ZStack {
+                LinearGradient(gradient: Gradient(colors: [Color("Olivine"), Color("BlackHaze"), Color("Olivine")]),
+                               startPoint: .top, endPoint: .bottom)
+                .ignoresSafeArea()
+                List(itemData.items, id: \.id) { item in
+                    HStack {
+                        VStack(alignment: .leading) {
+                            Text("\(item.id)")
+                                .font(.headline)
+                            Text(item.itemname)
+                                .font(.subheadline)
+                        }
+                        VStack(alignment: .trailing) {
+                            Text(item.itemname)
+                                .font(.headline)
+                            Text(item.comment)
+                                .font(.subheadline)
+                        }
+                        Spacer()
+                        Button(action: {
+                            // remove the item from your backend
+                            loadDataForItemId(itemid: item.id)
+                            
+                            // remove the item from the itemData.items array
+                            if let index = itemData.items.firstIndex(where: { $0.id == item.id }) {
+                                itemData.items.remove(at: index)
+                            }
+                        }) {
+                            Image(systemName: "trash.circle")
+                                .renderingMode(Image.TemplateRenderingMode?.init(Image.TemplateRenderingMode.original))
+                                .resizable()
+                                .frame(width: 30, height: 30)
+                        }
+                        .buttonStyle(BorderlessButtonStyle())
                     }
-                }) {
-                    Image(systemName: "trash.circle")
-                        .renderingMode(Image.TemplateRenderingMode?.init(Image.TemplateRenderingMode.original))
-                        .resizable()
-                        .frame(width: 30, height: 30)
                 }
-                .buttonStyle(BorderlessButtonStyle())
             }
-        }
+            .scrollContentBackground(.hidden)
             .onAppear(perform: loadData)
+        }
+            .accentColor(.white)
     }
     
     func loadData() {
