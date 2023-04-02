@@ -19,18 +19,17 @@ struct ItemList: View {
                 .ignoresSafeArea()
                 List(itemData.items, id: \.id) { item in
                     HStack {
-                        VStack(alignment: .leading) {
                             Text("\(item.id)")
-                                .font(.headline)
-                            Text(item.itemname)
-                                .font(.subheadline)
-                        }
-                        VStack(alignment: .trailing) {
+                                .frame(width: 0, height: 0)
                             Text(item.itemname)
                                 .font(.headline)
+                                .frame(minWidth: 0, maxWidth: .infinity)
+                            Text("\(item.quantity)")
+                                .frame(width: 25)
+                            Text(item.unit)
+                                .frame(minWidth: 0, maxWidth: .infinity)
                             Text(item.comment)
-                                .font(.subheadline)
-                        }
+                                .frame(minWidth: 0, maxWidth: .infinity)
                         Spacer()
                         Button(action: {
                             // remove the item from your backend
@@ -64,16 +63,23 @@ struct ItemList: View {
         
         URLSession.shared.dataTask(with: url) { data, response, error in
             if let data = data {
+                print("Raw Data: \(data)")
                 if let decodedResponse = try? JSONDecoder().decode([Item].self, from: data) {
                     DispatchQueue.main.async {
                         self.itemData.items = decodedResponse
+                        print(decodedResponse)
                     }
                     return
                 }
             }
             
             print("Fetch failed: \(error?.localizedDescription ?? "Unknown error")")
+            print("Fetch failed:")
+            print("Response: \(response)")
+            print("Error: \(error)")
+            
         }.resume()
+        
     }
     
     func loadDataForItemId(itemid: Int) {
